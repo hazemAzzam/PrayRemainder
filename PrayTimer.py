@@ -1,28 +1,60 @@
-import requests
+import json
+import os
 from datetime import datetime
-from bs4 import BeautifulSoup
-from dateutil import parser
+import requests
 
+today = datetime.now().strftime("%d-%m-%Y")
+month = today.split('-')[1]
+year = today.split('-')[2]
 
+city = "Cairo"
+country = "Egypt"
 
-class PrayTimer:
-    def __init__(self):
-        self.today_date = datetime.today().date().strftime("%y/%m/%d")
-        self.names_ar = ["الفجر", "الظهر", "العصر", "المغرب", "العشاء"]
-        self.names_en = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
+api = f"https://api.aladhan.com/v1/calendarByCity/{year}/{month}?city={city}&country={country}&method=3"
 
-    def get_all_paryer_times_today(self):
-        data = {}
+def download(url, file):
+    res = requests.get(url)
+    with open(file, 'w') as file:
+        json_data = json.loads(res.content)
+        file.write(json.dumps(json_data))
 
-        response = requests.get("https://prayertimes.me/Cairo.html")
-        response.encoding = 'utf-8'
-        soup = BeautifulSoup(response.text, "html.parser")
+def formate(filename, output):
+    with open(filename, 'r') as filename:
+        data_file = json.load(filename)
 
-        prayer_times = soup.find_all(class_="badge badge-clockdif")
+        result = { }
 
-        for i, prayer_time in enumerate(prayer_times[1:]):
-            # convert to english datetime formate
-            data[self.names_en[i]] = parser.parse(prayer_time.text.replace('م', 'PM').replace('ص', 'AM')).time().strftime("%H:%M")
+        for data in data_file.get("data"):
+            result[data["date"]["gregorian"]["date"]] = data["timings"]
 
-        return data       
+        with open(output, "w") as res:
+            res.write(json.dumps(result))
+
+def check_files():
+    try:
+        if os.path.exists("data.json"):
+            with open("data.json", "r") as file:
+                data_file = json.load(file)
+                end_date = list(data_file.keys())[-1]
+
+                if today > end_date:
+                    download(api, "data.json")
+                    formate("data.json", "data.json")
+                else:
+                    pass
+        else:
+            download(api, "data.json")
+            formate("data.json", "data.json")
+
+        return True
+    except:
+        return False
         
+def get_times_now():
+    if check_files():
+        with open("data.json", 'r') as file:
+            today_times = json.load(file)[today]
+
+        return today_times
+    else:
+        print("No internet Connections")
