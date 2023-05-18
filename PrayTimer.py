@@ -49,7 +49,7 @@ def check_files():
         return True
     except:
         return False
-        
+
 def get_times_now():
     if check_files():
         with open("data.json", 'r') as file:
