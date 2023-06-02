@@ -33,10 +33,11 @@ def notify(name):
             duration=1,
             threaded=True
         )    
-        return
+        time.sleep(61)
+       # return
         
 
-    threading.Timer(30, notify, args=[name, ]).start()
+    threading.Timer(1, notify, args=[name, ]).start()
 
 threads = []
 
@@ -44,13 +45,13 @@ threads = []
 
 #threading.Thread(target=check_times).start()
 
-for time in times:
+for prayTime in times:
     now = datetime.now().strftime("%H:%M")
     #thread = threading.Thread(target=notify, args=[time, ]).start()
-    if now <= times[time].split(" (EEST)")[0]:
-        thread = threading.Thread(target=notify, args=[time, ])
-        thread.start()
-        threads.append(thread)
+    #if now <= times[prayTime].split(" (EEST)")[0]:
+    thread = threading.Thread(target=notify, args=[prayTime, ])
+    thread.start()
+    threads.append(thread)
 
-for thread in threads:
-    thread.join()
+#for thread in threads:
+#    thread.join()

@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime
 import requests
+import sys
 
 today = datetime.now().strftime("%d-%m-%Y")
 month = today.split('-')[1]
@@ -37,17 +38,19 @@ def check_files():
                 data_file = json.load(file)
                 end_date = list(data_file.keys())[-1]
 
-                if today > end_date:
+                if today not in data_file:
+                    # data file exists but the data has expired
                     download(api, "data.json")
                     formate("data.json", "data.json")
-                else:
-                    pass
         else:
+            # data file is not exist, so download it
             download(api, "data.json")
             formate("data.json", "data.json")
 
+        # the file has been verified correctly
         return True
     except:
+        # some error has occured, like no internet connection
         return False
         
 def get_times_now():
@@ -58,3 +61,4 @@ def get_times_now():
         return today_times
     else:
         print("No internet Connections")
+        #sys.exit()
