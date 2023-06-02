@@ -52,7 +52,7 @@ def check_files():
     except:
         # some error has occured, like no internet connection
         return False
-        
+
 def get_times_now():
     if check_files():
         with open("data.json", 'r') as file:
@@ -61,4 +61,4 @@ def get_times_now():
         return today_times
     else:
         print("No internet Connections")
-        #sys.exit()
+        sys.exit()
