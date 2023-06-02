@@ -3,8 +3,9 @@ from win10toast import ToastNotifier
 from datetime import datetime
 import threading
 import winsound
+import time
 
-
+primary = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"}
 times = get_times_now()
 print(times)
 #def check_times():
@@ -15,13 +16,14 @@ print(times)
 #        print(times)
 #    threading.Timer(1, check_times).start()
 
+# print hello
 
 def notify(name):
-    time = times[name].split(" (EEST)")[0]
+    prayTime = times[name].split(" (EEST)")[0]
 
     now = datetime.now().strftime("%H:%M")
     
-    if time == now:
+    if prayTime == now and name in primary:
         winsound.PlaySound("C:\\azan.wav", winsound.SND_ASYNC | winsound.SND_ALIAS )
         message = f"It is the time for {name}"
         toaster = ToastNotifier()
