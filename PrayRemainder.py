@@ -23,8 +23,8 @@ def notify(name):
 
     now = datetime.now().strftime("%H:%M")
     
-    if time == now and name in primary:
-        winsound.PlaySound(r"C:\azan\azan.wav", winsound.SND_ASYNC | winsound.SND_ALIAS )
+    if prayTime == now and name in primary:
+        winsound.PlaySound(r"C:\\azan\\azan.wav", winsound.SND_ASYNC | winsound.SND_ALIAS )
         message = f"It is the time for {name}"
         toaster = ToastNotifier()
         toaster.show_toast(
